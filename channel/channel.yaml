@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-channel-join-peers
+spec:
+  template:
+    metadata:
+      name: create-channel-join-peers
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: create-channel-join-peers
+        image: hyperledger/fabric-tools:latest
+        command: ["/bin/bash"]
+        args: ["-c", "/scripts/createchannel.sh"]
+        env:
+        - name: CORE_PEER_TLS_ENABLED
+          value: "true"
+        - name: CORE_PEER_MSPCONFIGPATH
+          value: "/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp"
+        volumeMounts:
+        - name: fabric-artifacts
+          mountPath: /organizations
+          subPath: organizations
+        - name: fabric-artifacts
+          mountPath: /scripts
+          subPath: scripts
+        - name: fabric-artifacts
+          mountPath: /configtx
+          subPath: configtx
+        - name: fabric-artifacts
+          mountPath: /channel-artifacts
+          subPath: channel-artifacts
+        - name: fabric-artifacts
+          mountPath: /chaincode
+          subPath: chaincode
+      volumes:
+      - name: fabric-artifacts
+        persistentVolumeClaim:
+          claimName: mypvc

@@ -1,0 +1,83 @@
+name: Fabric
+version: "2.0.0"
+caliper:
+  blockchain: fabric
+  sutOptions:
+    fabric:
+      gateway:
+        useGateway: true
+        gatewayOptions:
+          checkpointer: {}
+      channel: mychannel
+      contracts:
+        - id: mycc
+channels:
+  - channelName: mychannel
+    contracts:
+      - id: mycc
+organizations:
+  - mspid: Org1MSP
+    identities:
+      certificates:
+        - name: 'User1'
+          clientSignedCert:
+            path: '/organizations/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/signcerts/cert.pem'
+          clientPrivateKey:
+            path: '/organizations/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/92baf7fb2dfef06be231b84479be332d4e2f0b3a50994f4b7b6d41fb1d524b8a_sk'
+    connectionProfile:
+      path: '/organizations/peerOrganizations/org1.example.com/connection.yaml'
+  - mspid: Org2MSP
+    identities:
+      certificates:
+        - name: 'User1'
+          clientSignedCert:
+            path: '/organizations/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/signcerts/cert.pem'
+          clientPrivateKey:
+            path: '/organizations/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/keystore/026f9755e0091e674a5543b148eedd2932a59eafb424c0c432aa3cc4ef7f11cc_sk'
+    connectionProfile:
+      path: '/organizations/peerOrganizations/org2.example.com/connection.yaml'
+orderers:
+  - ordererName: orderer
+    url: grpcs://orderer:7050
+    tlsCACerts:
+      path: '/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/tls/tlscacerts/tls-ca-orderer-10054-ca-orderer.pem'
+    grpcOptions:
+      ssl-target-name-override: orderer.example.com
+peers:
+  - peerName: peer1-org1-example-com
+    url: grpcs://peer1-org1-example-com:7051
+    tlsCACerts:
+      path: '/organizations/peerOrganizations/org1.example.com/tlsca/tlsca.org1.example.com-cert.pem'
+    grpcOptions:
+      ssl-target-name-override: peer1-org1-example-com
+  - peerName: peer2-org1-example-com
+    url: grpcs://peer2-org1-example-com:7051
+    tlsCACerts:
+      path: '/organizations/peerOrganizations/org1.example.com/tlsca/tlsca.org1.example.com-cert.pem'
+    grpcOptions:
+      ssl-target-name-override: peer2-org1-example-com
+  - peerName: peer1-org2-example-com
+    url: grpcs://peer1-org2-example-com:7051
+    tlsCACerts:
+      path: '/organizations/peerOrganizations/org2.example.com/tlsca/tlsca.org2.example.com-cert.pem'
+    grpcOptions:
+      ssl-target-name-override: peer1-org2-example-com
+  - peerName: peer2-org2-example-com
+    url: grpcs://peer2-org2-example-com:7051
+    tlsCACerts:
+      path: '/organizations/peerOrganizations/org2.example.com/tlsca/tlsca.org2.example.com-cert.pem'
+    grpcOptions:
+      ssl-target-name-override: peer2-org2-example-com
+certificateAuthorities:
+  - caName: ca-org1
+    url: https://ca-org1:7054
+    tlsCACerts:
+      path: '/organizations/peerOrganizations/org1.example.com/ca/ca.org1.example.com-cert.pem'
+    httpOptions:
+      verify: false
+  - caName: ca-org2
+    url: https://ca-org2:8054
+    tlsCACerts:
+      path: '/organizations/peerOrganizations/org2.example.com/ca/ca.org2.example.com-cert.pem'
+    httpOptions:
+      verify: false

@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: verify-chaincode
+spec:
+  template:
+    spec:
+      containers:
+      - name: verify-chaincode
+        image: hyperledger/fabric-tools:latest
+        command: ["/bin/bash", "-c"]
+        args: ["./scripts/verify.sh"]
+        volumeMounts:
+        - name: fabric
+          mountPath: /scripts
+          subPath: scripts
+        - name: fabric
+          mountPath: /organizations
+          subPath: organizations
+        - name: fabric
+          mountPath: /configtx
+          subPath: configtx
+        - name: fabric
+          mountPath: /chaincode
+          subPath: chaincode
+
+      restartPolicy: OnFailure
+      volumes:
+      - name: fabric
+        persistentVolumeClaim:
+          claimName: mypvc
+
+

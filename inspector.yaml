@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc-inspector
+spec:
+  volumes:
+    - name: fabricfiles
+      persistentVolumeClaim:
+        claimName: mypvc
+  containers:
+    - name: inspector
+      image: busybox
+      command: ['sh', '-c', 'ls -R /mnt']
+      volumeMounts:
+        - mountPath: /mnt
+          name: fabricfiles

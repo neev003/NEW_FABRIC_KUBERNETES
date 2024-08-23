@@ -1,0 +1,16 @@
+#!/bin/bash
+set -euo pipefail
+METADIR=$2
+
+# Read the file content
+content=$(<"$METADIR/metadata.json")
+
+# Remove all whitespace and convert to lowercase
+content_clean=$(echo "$content" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
+
+# Check if the cleaned content contains the exact string we're looking for
+if [[ $content_clean == *'"type":"external"'* ]]; then
+    exit 0
+fi
+
+exit 1

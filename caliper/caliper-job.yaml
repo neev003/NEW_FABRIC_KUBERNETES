@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: caliper-benchmark
+spec:
+  template:
+    spec:
+      containers:
+        - name: caliper
+          image: hyperledger/caliper:0.6.0
+          workingDir: /
+          volumeMounts:
+            - mountPath: /networks
+              name: fabricfiles
+              subPath: networks
+            - mountPath: /benchmarks
+              name: fabricfiles
+              subPath: benchmarks
+            - mountPath: /organizations
+              name: fabricfiles
+              subPath: organizations
+            - mountPath: /workloads
+              name: fabricfiles
+              subPath: workloads
+          command:
+            - /bin/sh
+            - -c
+            - |
+              npx caliper bind --caliper-bind-sut fabric:fabric-gateway
+              npx caliper launch manager --caliper-workspace ./ --caliper-networkconfig /networks/networkConfig.yaml --caliper-benchconfig /benchmarks/myBenchmark.yaml --caliper-flow-only-test
+              echo "Benchmark completed. Sleeping for debugging purposes."
+              sleep 3600  # Sleep for 1 hour (3600 seconds)
+      restartPolicy: Never
+      volumes:
+        - name: fabricfiles
+          persistentVolumeClaim:
+            claimName: mypvc

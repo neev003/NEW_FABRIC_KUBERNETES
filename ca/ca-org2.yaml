@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ca-org2
+spec:
+  serviceName: "ca-org2"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ca-org2
+  template:
+    metadata:
+      labels:
+        app: ca-org2
+    spec:
+      containers:
+      - name: ca-org2
+        image: hyperledger/fabric-ca:latest
+        volumeMounts:
+        - name: ca-org2-data
+          mountPath: /etc/hyperledger/fabric-ca-server
+          subPath: ca-org2
+        ports:
+        - containerPort: 8054
+        command: ["fabric-ca-server", "start", "-b", "admin:adminpw", "--port", "8054", "-d"]
+        env:
+        - name: FABRIC_CA_SERVER_CA_NAME
+          value: ca-org2
+        - name: FABRIC_CA_SERVER_TLS_ENABLED
+          value: "true"
+        - name: FABRIC_CA_SERVER_CSR_HOSTS
+          value: "ca-org2"
+      volumes:
+      - name: ca-org2-data
+        persistentVolumeClaim:
+          claimName: mypvc
+

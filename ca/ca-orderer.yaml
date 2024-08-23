@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ca-orderer
+spec:
+  serviceName: "ca-orderer"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ca-orderer
+  template:
+    metadata:
+      labels:
+        app: ca-orderer
+    spec:
+      containers:
+      - name: ca-orderer
+        image: hyperledger/fabric-ca:latest
+        volumeMounts:
+        - name: ca-orderer-data
+          mountPath: /etc/hyperledger/fabric-ca-server
+          subPath: ca-orderer
+        ports:
+        - containerPort: 10054
+        command: ["fabric-ca-server", "start", "-b", "admin:adminpw", "--port", "10054", "-d"]
+        env:
+        - name: FABRIC_CA_SERVER_CA_NAME
+          value: ca-orderer
+        - name: FABRIC_CA_SERVER_TLS_ENABLED
+          value: "true"
+        - name: FABRIC_CA_SERVER_CSR_HOSTS
+          value: "ca-orderer-0,ca-orderer,localhost"
+        
+      volumes:
+      - name: ca-orderer-data
+        persistentVolumeClaim:
+          claimName: mypvc

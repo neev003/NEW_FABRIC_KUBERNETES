@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: chaincode
+spec:
+  serviceName: "chaincode"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chaincode
+  template:
+    metadata:
+      labels:
+        app: chaincode
+    spec:
+      containers:
+      - name: chaincode
+        image: docker.io/ragnarock1910/chaincode:tagname
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 7052
+        env:
+        - name: CHAINCODE_SERVER_ADDRESS
+          value: "0.0.0.0:7052"
+        - name: CHAINCODE_ID
+          value: "mycc:4abf45b6651b3f59d77a3a6d2411571cd9913eb8500b0da43b5848d2e2e6ba05"
+        volumeMounts:
+        - name: mypvc-volume
+          mountPath: /chaincode
+          subPath: chaincode
+      volumes:
+      - name: mypvc-volume
+        persistentVolumeClaim:
+          claimName: mypvc

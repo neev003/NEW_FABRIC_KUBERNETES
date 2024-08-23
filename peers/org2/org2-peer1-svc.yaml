@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: peer1-org2-example-com
+spec:
+  selector:
+    app: org2-peer1  # Ensure this matches the labels in the StatefulSet
+  ports:
+    - name: peer
+      protocol: TCP
+      port: 7051
+      targetPort: 7051
+    - name: chaincode
+      protocol: TCP
+      port: 7052
+      targetPort: 7052
+
